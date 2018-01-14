@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -58,8 +60,9 @@ public class Graph_view extends Frame implements ActionListener, WindowListener 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+	
 	}
+
 
 	@Override
 	public void windowIconified(WindowEvent e) {
@@ -69,8 +72,7 @@ public class Graph_view extends Frame implements ActionListener, WindowListener 
 
 	@Override
 	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 
 	@Override
@@ -83,16 +85,29 @@ public class Graph_view extends Frame implements ActionListener, WindowListener 
 		add(button1);
 		add(button2);
 		
+		
 		DefaultCategoryDataset data = new DefaultCategoryDataset();
 		
-		data.addValue(300, "USA", "2005");
-		data.addValue(500, "USA", "2006");
-		data.addValue(120, "USA", "2007");
-		
-		data.addValue(200, "China", "2005");
-		data.addValue(400, "China", "2006");
-		data.addValue(320, "China", "2007");
-		
+		int id,ton;
+		String name,year;
+		ResultSet rs;
+		MySQL mysql = new MySQL();
+		rs = mysql.selectAll();
+
+		try {
+			while(rs.next()){
+			    id = rs.getInt("id");
+			    name = rs.getString("name");
+			    year = rs.getString("year");
+			    ton = rs.getInt("ton");
+			    
+			    data.addValue(ton, name, year);
+			}  //try catch‚ÅˆÍ‚Þ
+		} catch (SQLException ee) {
+			// TODO Auto-generated catch block
+			ee.printStackTrace();
+		}
+
 		if(e.getSource() == button1) {
 			JFreeChart chart = ChartFactory.createBarChart(
 	    		"Import Volume",
@@ -117,11 +132,11 @@ public class Graph_view extends Frame implements ActionListener, WindowListener 
 		            false,
 		            false
 		     );
-		    ChartPanel cpanel = new ChartPanel(chart);
+			ChartPanel cpanel = new ChartPanel(chart);
 		    add(cpanel, BorderLayout.CENTER);
+
 		}
 		setVisible(true);
 		
 	}
-
 }
